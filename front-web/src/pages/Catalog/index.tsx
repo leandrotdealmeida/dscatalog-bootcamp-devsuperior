@@ -1,10 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { makeRequest } from '../../core/utils/request';
 import ProductCard from './components/ProductCard';
 import './styles.scss';
 
-const Catalog = () => (
-    <div className="catalog-container">
+const Catalog = () => {
+    // quando o componente iniciar, buscar a lista de produtos
+    // quando s lista de produtos estiver disponível, pouplar um estado no componente,
+    // e listar os produtos dinamicamente
+
+    useEffect(() => {
+        const params = {
+            page: 0,
+            linesPerPage: 12,
+        }
+
+        makeRequest({ url: '/products', params})
+         .then(response => console.log(response));
+
+    }, []);
+    
+    return (
+        <div className="catalog-container">
         <h1 className="catalog-title">
             Catálago de produtos
         </h1>
@@ -21,6 +38,7 @@ const Catalog = () => (
             <Link to="/products/10"> <ProductCard /> </Link>
         </div>
     </div>
-);
+    )
+}
 
 export default Catalog;
