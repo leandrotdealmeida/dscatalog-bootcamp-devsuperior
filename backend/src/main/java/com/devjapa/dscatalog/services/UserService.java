@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.devjapa.dscatalog.dto.RoleDTO;
 import com.devjapa.dscatalog.dto.UserDTO;
 import com.devjapa.dscatalog.dto.UserInsertDTO;
+import com.devjapa.dscatalog.dto.UserUpdateDTO;
 import com.devjapa.dscatalog.entities.Role;
 import com.devjapa.dscatalog.entities.User;
 import com.devjapa.dscatalog.repositories.RoleRepository;
@@ -59,7 +60,7 @@ public class UserService {
 	}	
 
 	@Transactional
-	public UserDTO update(Long id, UserDTO dto) {
+	public UserDTO update(Long id, UserUpdateDTO dto) {
 		try {
 			User entity = repository.getOne(id); // não vai ao banco, intancia objeto provisório
 			copyDtoToEntity(dto, entity);
