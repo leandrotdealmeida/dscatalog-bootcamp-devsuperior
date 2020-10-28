@@ -1,0 +1,11 @@
+version: "3.7"
+services:
+  postgres_cadastro:
+    container_name: postgres_ds_catalog
+    image: "postgres"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234567
+    ports:
+      - 5432:5432
+ 
