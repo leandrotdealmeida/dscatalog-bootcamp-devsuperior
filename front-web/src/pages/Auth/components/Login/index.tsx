@@ -1,10 +1,11 @@
 import ButtonIcon from 'core/components/ButtonIcon';
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import AuthCard from '../Card';
 import './styles.scss';
 import { makeLogin } from 'core/utils/request';
+import { saveSessionData } from 'core/utils/Auth';
 
 type FormData = {
     username: string;
@@ -14,12 +15,15 @@ type FormData = {
 const Login = () => {
     const { register, handleSubmit } = useForm<FormData>(); // initialize the hook
     const [hasError, setHasError] = useState(false);
+    const history = useHistory();
 
     const onSubmit = (data: FormData) => {
         console.log(data);
         makeLogin(data)
             .then(response => {
                 setHasError(false);
+                saveSessionData(response.data);
+                history.push('/admin');
             })
             .catch(() => {
                 setHasError(true);
@@ -49,8 +53,8 @@ const Login = () => {
                     Esqueci a senha?
                 </Link>
                 {hasError && (
-                    <div className="alert alert-danger mt-5" role="alert" >
-                        Usuário ou senhas inválidos!
+                    <div className="alert alert-danger mt-3" role="alert" >
+                        Usuário ou senha inválido!
                     </div>)}
                 <div className="login-submit">
                     <ButtonIcon text="logar" />
