@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import AuthCard from '../Card';
 import './styles.scss';
 import { makeLogin } from 'core/utils/request';
-import { saveSessionData } from 'core/utils/Auth';
+import { saveSessionData } from 'core/utils/auth';
 
 type FormData = {
     username: string;

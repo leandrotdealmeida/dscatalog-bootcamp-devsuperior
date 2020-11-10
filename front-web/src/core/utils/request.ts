@@ -1,5 +1,5 @@
 import axios, { Method } from 'axios';
-import { CLIENT_ID, CLIENT_SECRET } from './Auth';
+import { CLIENT_ID, CLIENT_SECRET, getSessionData } from './auth';
 import qs from 'qs';
 
 type RequestParams = {
@@ -27,6 +27,16 @@ export const makeRequest = ({ method = 'GET', url, data, params, headers }: Requ
     });
 }
 
+export const makePrivateRequest = ( {method = 'GET', url, data, params }: RequestParams) => {
+    const sessionData = getSessionData();
+
+    const headers = {
+        'Authorization': `Bearer ${sessionData.access_token}`
+    }
+
+    return makeRequest({ method, url, data, params, headers });
+}
+
 export const makeLogin = (loginData : LoginData) => {
     const token = `${CLIENT_ID}:${CLIENT_SECRET}`;
 
@@ -34,9 +44,8 @@ export const makeLogin = (loginData : LoginData) => {
         Authorization: `Basic ${window.btoa(token)}`,
         'Content-Type': `application/x-www-form-urlencoded`
     }
-
-    // '/oauth/token'
-    // username=maria@gmail.com&password=123456&grant_type=password
+   // '/oauth/token'
+   // username=maria@gmail.com&password=123456&grant_type=password
    // const payload2 = `username=${loginData.username}&password=${loginData.password}&grant_type=password`;
    const newLoginData = { ...loginData, grant_type: 'password'};
    const payload = qs.stringify(newLoginData);
