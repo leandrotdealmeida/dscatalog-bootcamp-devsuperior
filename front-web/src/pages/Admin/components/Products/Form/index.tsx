@@ -38,7 +38,10 @@ const Form = () => {
     makePrivateRequest({ url: '/products', method: 'POST', data: payload})
     .then(() => {
       setFormData({ name: '', category: '', price: '', description: ''});
-    });    
+    })
+    .catch((error) => {
+      console.log(error);
+    });   
 
   }
 
