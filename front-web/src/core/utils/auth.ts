@@ -11,7 +11,7 @@ type LoginResponse = {
     userId: number;
 }
 
-type Role = 'ROLE_OPERATOR' | 'ROLE_ADMIN';
+export type Role = 'ROLE_OPERATOR' | 'ROLE_ADMIN';
 
 type AccessToken = {
     exp: number;
@@ -42,10 +42,8 @@ export const getAccessTokenDecoded = () => {
 export const isTokenValid = () => {
     const { exp } = getAccessTokenDecoded();
 
-    if (Date.now() <= exp * 1000) {
-        return true;
-    }
-    return false;
+    return Date.now() <= exp * 1000;
+        
 }
 
 export const isAuthenticated = () => {
@@ -54,4 +52,11 @@ export const isAuthenticated = () => {
     // access_token não pode ser expirado
     return sessionData.access_token && isTokenValid();
 
+}
+
+export const isAllowedByRole = (routeRoles: Role[] = []) => {
+    if (routeRoles.length === 0) {
+        return true;
+    }
+   return false;
 }
