@@ -1,5 +1,7 @@
 package com.devjapa.dscatalog.services;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
@@ -25,20 +27,21 @@ import com.devjapa.dscatalog.services.exceptions.ResourceNotFoundException;
 public class ProductService {
 
 	@Autowired
-	private ProductRepository repository;
+	private ProductRepository productRepository;
 	
 	@Autowired
 	private CategoryRepository categoryRepository;
 
 	@Transactional(readOnly = true)
-	public Page<ProductDTO> findAllPaged(PageRequest pageRequest) {
-		Page<Product> list = repository.findAll(pageRequest);
+	public Page<ProductDTO> findAllPaged(Long categoryId, String name, PageRequest pageRequest) {
+		List<Category> categories = (categoryId == 0) ? null : Arrays.asList(categoryRepository.getOne(categoryId));
+		Page<Product> list = productRepository.find(categories, name, pageRequest);
 		return list.map(x -> new ProductDTO(x));
 	}
 
 	@Transactional(readOnly = true)
 	public ProductDTO findById(Long id) {
-		Optional<Product> obj = repository.findById(id);
+		Optional<Product> obj = productRepository.findById(id);
 		Product entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
 		return new ProductDTO(entity, entity.getCategories());
 	}
@@ -48,16 +51,16 @@ public class ProductService {
 		Product entity = new Product();
 		copyDtoToEntity(dto, entity);
 		//entity.setName(dto.getName());
-		entity = repository.save(entity);
+		entity = productRepository.save(entity);
 		return new ProductDTO(entity);
 	}	
 
 	@Transactional
 	public ProductDTO update(Long id, ProductDTO dto) {
 		try {
-			Product entity = repository.getOne(id); // não vai ao banco, intancia objeto provisório
+			Product entity = productRepository.getOne(id); // não vai ao banco, intancia objeto provisório
 			copyDtoToEntity(dto, entity);
-			entity = repository.save(entity);
+			entity = productRepository.save(entity);
 			return new ProductDTO(entity);
 		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Id Not Found" + id);
@@ -66,7 +69,7 @@ public class ProductService {
 
 	public void delete(Long id) {
 		try {
-			repository.deleteById(id);
+			productRepository.deleteById(id);
 		} catch (EmptyResultDataAccessException e) {
 			throw new ResourceNotFoundException("Id not found " + id);
 		} catch (DataIntegrityViolationException e) {
